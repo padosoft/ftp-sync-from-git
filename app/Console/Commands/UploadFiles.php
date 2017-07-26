@@ -101,6 +101,9 @@ class UploadFiles extends Command
             $ftpPwd = $domainList[$prjNumber]['FTP_PWD'];
             $ftpMod = $domainList[$prjNumber]['FTP_MOD_PASSIVE'];
             $ftpHtdocs = $domainList[$prjNumber]['FTP_HTDOCS'];
+            $curlUrl = $domainList[$prjNumber]['CURL_URL'];
+            $curlUsr = $domainList[$prjNumber]['CURL_USR'];
+            $curlPwd = $domainList[$prjNumber]['CURL_PWD'];
 
             //echo "$prjNumber gitLocalPath ".("'".$gitLocalPath."''");
 
@@ -215,10 +218,10 @@ class UploadFiles extends Command
 
             foreach ($content as $fileName) {
                 if (strpos($fileName, 'migrations') !== false) {
-                    $msg = "trovato file di migration: " . $fileName;
+                    $msg =  PHP_EOL."trovato file di migration: " . $fileName;
                     Log::info($msg);
                     if ($this->confirm($msg . " - vuoi eseguirlo?")) {
-                        $this->doMigration($fileName);
+                        $this->doMigration($fileName,$curlUrl, $curlUsr, $curlPwd);
                     }
                 }
 
@@ -233,45 +236,33 @@ class UploadFiles extends Command
         }
     }
 
-    private function doMigration($fileName)
+    private function doMigration($fileName,$curlUrl, $curlUsr, $curlPwd)
     {
         try {
 
-            $url = env('NENCINISPORT_CURL_URL', 'usr');
-            $fields = array(
-                'fileName' => $fileName,
-                'usr' => env('NENCINISPORT_CURL_USR', 'usr'),
-                'pwd' => env('NENCINISPORT_CURL_PWD', 'pwd'),
-
-            );
-
-            $fields_string = "";
-            foreach ($fields as $key => $value) {
-                $fields_string .= $key . '=' . $value . '&';
-            }
-            rtrim($fields_string, '&');
-
             $ch = curl_init();
 
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
+            curl_setopt($ch, CURLOPT_URL, $curlUrl);
+            curl_setopt($ch, CURLOPT_USERPWD, $curlUsr . ":" . $curlPwd);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($ch);//es. di result: '+Ok 100000000 bool(true)'
 
             curl_close($ch);
 
-            $result = strip_tags($result);
+            //$result = strip_tags($result);
 
-            $msg = "Risultato migration " . $result;
+            $msg = "Risultato migration $curlUrl: " . $result;
+            //echo $msg.PHP_EOL;
             if ($result == 1) {
                 $msg = "Migration ok " . $fileName;
             } else {
                 $msg = "Migration fails: " . $fileName;
             }
-            echo $msg;
+            echo $msg.PHP_EOL;
             Log::info($msg);
         } catch (Exception $e) {
+            echo "errore curl: ".$e->getMessage();
         }
 
     }
