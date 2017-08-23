@@ -1,27 +1,30 @@
-## Laravel PHP Framework
+## docs del comando upload:files
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+Comando: php artisan upload:files
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+File di configurazione: .env
 
-Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+Questo comando permette di inviare su un server remoto una lista di files associati ad un commit. 
 
-## Official Documentation
+Per ogni progetto che vogliamo gestire bisogna specificare le seguenti variabili nel file .env
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+NENCINISPORT_DOMAINNAME=nencini
+NENCINISPORT_FTP_SERVER_IP=95.110.192.207
+NENCINISPORT_GIT_LOCAL_PATH=C:/xampp/htdocs/nencinisport.it/
+NENCINISPORT_FTP_USR=andrea3
+NENCINISPORT_FTP_PWD=tequila77
+NENCINISPORT_FTP_MOD_PASSIVE=true
+NENCINISPORT_FTP_HTDOCS=Backup/test2
 
-## Contributing
+DOMAINNAME è una stringa che identifica il nome del progetto
+FTP_SERVER_IP è l'ip del server dove risiede il prj
+GIT_LOCAL_PATH è la dir dove si trova il prj nel pc locale
+FTP_HTDOCS è la dir di partenza, sul server remoto, da dove iniziare a copiare i files
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+Una volta eseguito il comando php artisan upload:files, viene visualizzate queste domande:
+1) Scegliere il nome del progetto
+2) Quanti commit vuoi gestire
+3) Sei sicuro di voler procedere?
+4) Per ogni file di migration trovato, viene chiesto se vogliamo eseguirlo
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
-
-### License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+I files inviati vengono scritti in storage/app/deploy_files_list.txt
