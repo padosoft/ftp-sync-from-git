@@ -16,14 +16,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Padosoft\AffiliateNetwork\Networks\Zanox;
-use Padosoft\AffiliateNetwork\Networks\TradeDoubler;
-use Padosoft\AffiliateNetwork\Networks\NetAffiliation;
-use Padosoft\AffiliateNetwork\Networks\WebGains;
 use Illuminate\Console\Command;
-use App\Repositories\Medici\MediciRepository;
-use App\Repositories\Prestazioni\PrestazioniRepository;
-use App\Repositories\Specializzazioni\SpecializzazioniRepository;
 use Symfony\Component\Process\Process;
 
 class UploadFiles extends Command
@@ -218,11 +211,12 @@ class UploadFiles extends Command
 
             foreach ($content as $fileName) {
                 if (strpos($fileName, 'migrations') !== false) {
-                    $msg =  PHP_EOL."trovato file di migration: " . $fileName;
-                    Log::info($msg);
-                    if ($this->confirm($msg . " - vuoi eseguirlo?")) {
+                    //$msg =  PHP_EOL."trovato file di migration: " . $fileName;
+                    //Log::info($msg);
+                    if ($this->confirm("trovato 1 o piu' files di migration, vuoi eseguirlo/i?")) {
                         $this->doMigration($fileName,$curlUrl, $curlUsr, $curlPwd);
                     }
+                    break;
                 }
 
             }
@@ -239,6 +233,8 @@ class UploadFiles extends Command
     private function doMigration($fileName,$curlUrl, $curlUsr, $curlPwd)
     {
         try {
+            $msg = "url ws migration: $curlUrl ";
+            echo $msg.PHP_EOL;
 
             $ch = curl_init();
 
@@ -251,13 +247,14 @@ class UploadFiles extends Command
             curl_close($ch);
 
             //$result = strip_tags($result);
-
-            $msg = "Risultato migration $curlUrl: " . $result;
+            $msg = "Risultato curl al ws migration: ";
+            echo $msg.PHP_EOL;
+            var_dump($result);
             //echo $msg.PHP_EOL;
             if ($result == 1) {
-                $msg = "Migration ok " . $fileName;
+                $msg = "Migration ok ";
             } else {
-                $msg = "Migration fails: " . $fileName;
+                $msg = "Migration fails ";
             }
             echo $msg.PHP_EOL;
             Log::info($msg);
